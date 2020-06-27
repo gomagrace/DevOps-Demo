@@ -1,0 +1,4 @@
+---
+# vars file for role-a
+
+ nginx_port: 8080

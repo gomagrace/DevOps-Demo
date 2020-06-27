@@ -1,0 +1,11 @@
+---
+# vars file for role-b
+
+  db_root:
+  db_name: petclinic
+  db_user: petclinic
+  db_pass: petclinic 
+  db_host: '%'
+  port: 3306
+  bind:
+   - 0.0.0.0

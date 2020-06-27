@@ -1,0 +1,6 @@
+---
+ - hosts: vm3
+   become: true
+   become_user: root
+   roles:
+     - role-b 

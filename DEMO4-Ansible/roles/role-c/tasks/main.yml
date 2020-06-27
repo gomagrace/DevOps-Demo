@@ -1,0 +1,47 @@
+---
+# tasks file for role-c
+ - name: Update package manager repositories cache
+   yum:
+     update_cache: yes
+
+ - name: Install OpenJDK Java
+   yum:
+    name: "{{ item }}"
+    state: present
+   with_items:
+     java-1.8.0-openjdk
+ 
+# - name: Install Jfrog cli
+#   shell: curl -fL https://getcli.jfrog.io | sh &&  mv jfrog /usr/bin && jfrog
+ 
+ - name: Download my jar file from Artifactory
+   get_url:
+     url: https://jfrog.ukrtux.com:443/artifactory/petclinic/com/epam_labs/grace/PetClinicProject/2.2.0.BUILD-SNAPSHOT/PetClinicProject-2.2.0.BUILD-20200420.173427-1.jar  
+     headers:   
+     username: XXXXXXX
+     password: XXXXXXXXXXXXXXXXX
+     dest: /home/vagrant/petclinic.jar
+
+ - name: Adding environment for petclinic app.
+   lineinfile:
+     dest: "/etc/systemd/system/petclinic.service.d/env.conf"
+     line: "[Service]"
+     insertafter: 'EOF'
+     regexp: "[Service]"
+     create: yes
+     state: present
+
+ - name: Adding jvm options
+   lineinfile: 
+     dest: "/etc/systemd/system/petclinic.service.d/env.conf" 
+     line: "Environment='JAVA_TOOL_OPTIONS=-Dserver.port={{ port }} -Xms128m -Xmx256m'" 
+     insertafter: 'EOF' 
+     regexp: "Environment"
+     create: yes
+     state: present
+
+ - name: Copy petclinic service script to host
+   template:
+     src: petclinic.cnf.j2
+     dest: /lib/systemd/system/petclinic.service
+

@@ -1,0 +1,31 @@
+---
+# tasks file for role-a
+- name: install latest nginx version
+  yum:
+    name: nginx
+    state: latest
+
+
+#- name: Test uri module.
+#  uri:
+#    url: "http://172.28.128.4:8080/"
+#    return_content: yes
+#    status_code: 401
+#    validate_certs: no
+#    register: result
+
+- name: copy nginx configuration file
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  notify: restart nginx
+  tags: [nginx, config]
+
+- name: start nginx
+  service:
+    name: nginx
+    state: started
+  tags: [nginx, status]

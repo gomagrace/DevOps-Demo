@@ -1,0 +1,10 @@
+[Unit]
+Description=Run-petclinic systemd service.
+
+[Service]
+Type=simple
+Environment='JAVA_TOOL_OPTIONS=-Dserver.port=8080 -Xms128m -Xmx256m'
+ExecStart=/bin/java -jar /home/vagrant/petclinic.jar
+
+[Install]
+WantedBy=multi-user.target

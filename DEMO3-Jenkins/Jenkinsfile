@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+    stages {
+        stage ('Clone') {
+            steps {
+                git branch: 'master', url: "https://yoko.ukrtux.com/gracegoma/grace_goma.git"
+            }
+        }
+
+        stage ('Artifactory configuration') {
+            steps {
+                rtServer (
+                    id: "demo.labs.snapshots",
+                    url: "https://jfrog.ukrtux.com/artifactory",
+                    credentialsId: "Artifactory_key"
+                )
+
+                rtMavenDeployer (
+                    id: "MAVEN_DEPLOYER",
+                    serverId: "demo.labs.snapshots",
+                    releaseRepo: "generic-local",
+                    snapshotRepo: "generic-local"
+                )
+
+            }
+        }
+
+        stage ('Maven build') {
+            steps {
+                rtMavenRun (
+                    tool: 'Maven 3.6.0',
+                    pom: 'DEMO3/pom.xml',
+                    goals: 'clean install',
+                    deployerId: "MAVEN_DEPLOYER",
+
+                )
+            }
+        }
+
+        stage ('Publish build info') {
+            steps {
+                rtPublishBuildInfo (
+                    serverId: "demo.labs.snapshots"
+                )
+            }
+        }
+    }
+}

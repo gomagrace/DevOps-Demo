@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: petclinic
+  labels:
+    app: petclinic
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: petclinic
+  template:
+    metadata:
+      labels:
+        app: petclinic
+    spec:
+      containers:
+      - name: petclinic
+        image: gracegoma/petclinic:1.0
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+             name: petclinic-profile
+             key: profile
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+            - mountPath: "/config"
+              name: petclinic-data
+      volumes:
+        - name: petclinic-data
+          configMap:
+            name: petclinic-profile
+            items:
+              - key: application-mysql.properties
+                path: application-mysql.properties

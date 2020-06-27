@@ -1,0 +1,33 @@
+---
+# tasks file for role-b
+
+- name: Install MySQL
+  apt:
+    name: ['mysql-server', 'mysql-client', 'python-mysqldb', 'python-pymysql'] 
+    state: latest
+
+- name: Run mysql
+  service:
+    name: mysql
+    state: started
+    enabled: yes  
+
+- name: Create database
+  mysql_db:
+     name: '{{ db_name }}'
+     state: present
+
+- name: Create user for the database
+  mysql_user:
+    name: '{{ db_user }}'
+    password: '{{ db_pass }}'
+    priv: '{{ db_name }}.*:ALL'
+    host: '{{db_host}}'
+    state: present
+
+#- name: Check created database
+#  mysql_query:
+#    login_host: '{{ db_host  }}'
+#    login_user: '{{ db_user }}'
+#    login_password: '{{ db_pass }}'
+#    query: SHOW DATABASES

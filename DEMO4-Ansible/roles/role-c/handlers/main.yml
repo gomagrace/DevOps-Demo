@@ -1,0 +1,9 @@
+---
+# handlers file for role-c
+
+- name: Start petclinic service
+  systemd:
+    name: petclinic.service
+    state: started
+    daemon_reload: yes
+
